@@ -1,4 +1,8 @@
 #include "Boite.hpp"
+#include <iostream>	// pour pouvoir utiliser des objets ostreram
+#include <fstream> 
+#include <string>
+using namespace std;
 
 Boite::Boite(int dim, double rayon) {
 	this->niveau = 0;
@@ -46,7 +50,7 @@ void Boite::construction_filles2D() {
 
 // Créer les boîtes filles d'une boîte en pleine division, pour la diension 3
 void Boite::construction_filles3D() {
-	if (niveau > 3) exit(-1);
+	//if (niveau >50) exit(-1);
 	double nv_rayon = rayon/2;
 	int nv_niveau = niveau+1;
 	// base
@@ -146,6 +150,27 @@ void Boite::Update(double timeout, double timestep)
 	cout << "Number of frames: " << (timeout*timestep) << endl;
 }
 
+// Write all data for all particles into one single file
+void Boite::PrintParticles(ofstream& ofs)
+{
+	if (filles.size()==0) {
+		if (particule!=NULL) {
+			cout << *particule << "\n" <<endl;
+			for (auto& curseur : (*particule).chronographe) 
+			{	
+				// cout << "Running curseur" << endl;
+				// cout << curseur << endl;	
+				// write in file
+				ofs << curseur ;
+			 	ofs << "\n";
+			}	
+		}
+	} else {
+		for (auto& curseur : filles) {
+			curseur.PrintParticles(ofs);
+		}
+	}
+}
 ostream& operator<<(ostream& os, const Boite& B) {
 	for(int i=0; i<B.niveau; i++) os << '\t';
 	os<<"Boite: " << "niveau: " <<B.niveau<<", "<<"rayon: " <<B.rayon<<", "<<"coin: " <<B.coin<<", "<<"centre: " <<B.centre<<", "<<"mass: " << B.masse << endl;

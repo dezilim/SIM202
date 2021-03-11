@@ -36,6 +36,7 @@ class Boite { // la classe des boîtes
 		void MajPos(std::vector<int> & aux);
 		void MajMass();
 		void Update(double timeout, double timestep);
+		void PrintParticles(ofstream& ofs);
 };
 
 ostream& operator<<(ostream& os, const Boite& B);
