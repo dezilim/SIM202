@@ -36,19 +36,39 @@ void Particule::Appliquer(double mg, const Vecteur& centre) {
 }
 
 void Particule::Deplacer(double dt) {
+	//chronographe.push_back(position);
+	//cout<< "Displacing.... " <<endl;
 	chronographe.push_back(position);
+	//velocitycheck.push_back(vitesse);
 	vitesse += dt * force;
 	position += dt * vitesse;
 	
 
 	// check if the next position will exit the box
 	for (int i = 0; i < (position.dim); i++)
-	{
-		if (((float) abs(position.val[i])) > 1.0)
+	{	
+	
+		if ((float) position.val[i]>1.0)
 		{
-			position -= dt * vitesse;
-			vitesse = (-1)*vitesse;
-		} 
+			position.val[i] = 1.0;
+			vitesse.val[i] *= -1;
+
+		}
+
+		if ((float) position.val[i]<-1.0)
+		{
+			position.val[i] = -1.0;
+			vitesse.val[i] *= -1;
+
+		}
+		// if (((float) abs(position.val[i])) > 1.0)
+		// {
+		// 	cout << "The position is exceeeding on index : " << i << endl;
+			
+		// 	vitesse.val[i] *= -1;
+		// 	//vitesse = (-1)*vitesse;
+		// } 
+		// position += dt * vitesse;
 	}
 
 	force *= 0.0;
