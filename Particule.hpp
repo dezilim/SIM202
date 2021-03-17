@@ -16,6 +16,7 @@ class Particule {
 		Vecteur vitesse;
 		Vecteur force; // force massique
 		vector<Vecteur> chronographe; // berk !
+		vector<Vecteur> velocitycheck; // berk !
 	// public:
 		Vecteur position;
 		
@@ -24,7 +25,7 @@ class Particule {
 		Particule(Vecteur& position, Vecteur& vitesse);
 		
 		void Appliquer(double mg, const Vecteur& centre);
-		void Deplacer(double dt);
+		void Deplacer(double dt, Vecteur coin, double rayon);
 		
 		friend ostream& operator<<(ostream& os, const Particule& P);
 };

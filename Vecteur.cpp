@@ -15,6 +15,8 @@ Vecteur::Vecteur(int dim, int i) {
 	this->val[i-1] = 1.0;
 }
 
+
+
 // Copie d'un vecteur P
 Vecteur::Vecteur(const Vecteur& P) {
 	this->dim = P.dim;

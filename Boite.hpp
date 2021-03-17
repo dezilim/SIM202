@@ -32,14 +32,18 @@ class Boite { // la classe des boîtes
 		
 		void Injecter(Particule& P);
 		void Bilan_force_complet(Boite& racine) const;
-		void Deplacer_particules_interieur(double dt) const;
+		void Deplacer_particules_interieur(double dt, Vecteur coin, double rayon) const;
 		void MajPos(std::vector<int> & aux);
 		void MajMass();
-		void Update(double timeout, double timestep);
+		void Update(double timeout, double timestep, Boite& updateBox);
 		void PrintParticles(ofstream& ofs);
+		void InjectToNew(Boite& updatedBox);
+
 };
 
 ostream& operator<<(ostream& os, const Boite& B);
+Boite returnUpdate(Boite& BOX);
+
 
 #endif
 

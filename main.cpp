@@ -2,10 +2,12 @@
 #include "Vecteur.hpp"
 #include "Particule.hpp"
 #include "Boite.hpp"
+#include <math.h>
 
 #include <iostream>	// pour pouvoir utiliser des objets ostreram
 #include <fstream> 
 #include <string>
+#define PI 3.14159265
 using namespace std;
 
 int main( int argc, char * argv[] ) {
@@ -25,20 +27,20 @@ int main( int argc, char * argv[] ) {
 	Vecteur O(3);
 	Vecteur P(3, 1), Q(3, 0.1), R(3, 0.3);
 	Vecteur S(3,0.2);
-	Vecteur T = 0.1*P;
+	Vecteur T = (-0.1)*P;
 	Vecteur U(3, 2);
 	Vecteur E = 0.2*U;
-	cout << "Test de la classe Vecteur--------------------------------------" << endl;
-	cout << "P et Q compatibles ?: "; Compatible(P, Q, "main"); cout << "oui" << endl;
-	cout << "O=" << O << endl;
-	cout << "P=" << P << endl;
-	cout << "Q=" << Q << endl;
-	cout << "R=" << R << endl;
-	cout << "S=" << S << endl;
-	cout << "O+P+2.*Q-R/2.=" << (O+P+2.*Q-R/2.) << endl;
-	cout << norme2(S) << endl;
+	// cout << "Test de la classe Vecteur--------------------------------------" << endl;
+	// cout << "P et Q compatibles ?: "; Compatible(P, Q, "main"); cout << "oui" << endl;
+	// cout << "O=" << O << endl;
+	// cout << "P=" << P << endl;
+	// cout << "Q=" << Q << endl;
+	// cout << "R=" << R << endl;
+	// cout << "S=" << S << endl;
+	// cout << "O+P+2.*Q-R/2.=" << (O+P+2.*Q-R/2.) << endl;
+	// cout << norme2(S) << endl;
 	
-	// // test de la classe Particule
+	// test de la classe Particule
 	Particule Soleil(S,R), Mercure(T, Q), Venus(Q, P), Terre(E, P), Mars(O,P);
 	// cout << "Test de la classe Palorenz-phaserticule-------------------------------------" << endl;
 	// cout << "-----------------Position Velocity Force " << endl;
@@ -48,79 +50,74 @@ int main( int argc, char * argv[] ) {
 	// cout << "Terre : " << Terre << endl;
 	// cout << "Mars : " << Mars << endl;
 
-	// cout << "Displaced Particles--------------------------------------" << endl;
-	// for(int i=0; i<10; i++)
-	// {
-	// 	Terre.Deplacer(1);
-	// 	Soleil.Deplacer(1);
-	// } 
-	
-	// cout << "New positions velocity and foce--------------------------" << endl;
-	// cout << "Soleil: " << Soleil << endl;
-	// cout << "Mercure : " << Mercure << endl;
-	// cout << "Venus : " << Venus << endl;
-	// cout << "Terre : " << Terre << endl;
-	// cout << "Mars : " << Mars << endl;
 
-	// cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% AUTO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl;
+	cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% AUTO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl;
 	Vecteur X(3,1), Y(3,2), Z(3,3);	
 	vector<Particule> particle_list;
 	
-	Boite ourWorld(3, 1.0);
-	// ourWorld.Injecter(Soleil);
-	// ourWorld.Injecter(Terre);
-	// ourWorld.Injecter(Mercure);
-	// cout << ourWorld << endl;
-	// for(int i = 0; i<3; i++)
-	// {
-	// 	if (i == 0)
-	// 	{
-	// 		ourWorld.Injecter(Soleil);
-	// 	}
-	// 	if (i == 1)
-	// 	{
-	// 		ourWorld.Injecter(Terre);
-	// 	}
-	// 	if (i == 2)
-	// 	{
-	// 		ourWorld.Injecter(Mercure);
-	// 	}
-	// }
-	// cout << ourWorld << endl;
-	// cout << " %%%%%%%%%%%%%%%%%% UPDATING %%%%%%%%%%%%%%%%%% " <<endl;
-	// ourWorld.Update(20, 20);
-
-
-	//int nb_particles = rand() % 10 + 1;
-	// vector<Vecteur> myPositions = {S, T, E};
-	// vector<Vecteur> myVelocities = {R, Q, P};
 
 
 
-	// GENERATE PARTICLES AND UPDATE --------------------------------------------------------------------
+	//GENERATE PARTICLES AND UPDATE --------------------------------------------------------------------
 	clock_t begin = clock();
 
 
-	int nb_particles = 50;
-
+	int nb_particles = 5;
+	Boite ourWorld(3, 20.0);
+	ourWorld.coin.val[0] = -10.0; ourWorld.coin.val[1] = -10.0;ourWorld.coin.val[2] = -10.0;
 	vector<Particule> myParticles;
+
 	cout << "Number of particles generated : " << nb_particles << endl; 
 	// create particles and put them in a list (dont inject in this loop, there will be an error)
 	for(int i = 0; i<nb_particles; i++)
 	{	
 		cout << "Generating particle " << (i+1) << "..." <<endl;
 		
-		double pos_x =  (double)(((float)((int)((((float) rand()) / (float) RAND_MAX) * 10)))/10);
-		double pos_y =  (double)(((float)((int)((((float) rand()) / (float) RAND_MAX) * 10)))/10);
-		double pos_z =  (double)(((float)((int)((((float) rand()) / (float) RAND_MAX) * 10)))/10);
-		double vel_x =  (double)(((float)((int)((((float) rand()) / (float) RAND_MAX) * 10)))/10);
-		double vel_y =  (double)(((float)((int)((((float) rand()) / (float) RAND_MAX) * 10)))/10);
-		double vel_z =  (double)(((float)((int)((((float) rand()) / (float) RAND_MAX) * 10)))/10);
-		Vecteur Pos = pos_x*X + pos_y*Y + pos_z*Z; Vecteur Vel = vel_x*X + vel_y*Y + vel_z*Z;
+		// pick a random number from 0 to 1
+		double x1 = ((float) rand()) / (float) RAND_MAX;
+		double x2 = ((float) rand()) / (float) RAND_MAX;
+		double x3 = ((float) rand()) / (float) RAND_MAX;
+		double r = 1.0/pow((pow((1/x1),2.0/3)-1), 0.5);
+		if (r >= 10.0) r = 9.9;
+
+		double pos_z = (1-2*x2)*r; 
+		double pos_x = pow((pow(r,2) - pow(pos_z,2)),0.5)* cos(2*PI*x3);
+		double pos_y = pow((pow(r,2) - pow(pos_z,2)),0.5)*sin(2*PI*x3);
+
+		cout << "x1: " << x1 << endl; cout << "x2: " << x2 << endl; cout << "x3: " << x3 << endl;
+		cout << "pos x : " << pos_x << endl; cout << "pos y : " << pos_y<< endl; cout << "pos z : " << pos_z<< endl; 
+		cout << "r : " << r << endl;
+
+
+		// calculation of velocity
+		double x4 = ((float) rand()) / (float) RAND_MAX;
+		double x5 = ((float) rand()) / (float) RAND_MAX;
+		int count = 0;
+		while (x5 > 10 * pow((x4),2)/pow((1-pow((x4),2)), 0.25))
+		{	
+			count++;
+			double x4 = ((float) rand()) / (float) RAND_MAX;
+			double x5 = ((float) rand()) / (float) RAND_MAX;
+			if (count > 10) break;
+		}
+		double q = x4;
+		double V = q*sqrt(2)/pow(1+ pow(r,2),0.25);
+
+		double x6 = ((float) rand()) / (float) RAND_MAX;
+		double x7 = ((float) rand()) / (float) RAND_MAX;
+
+		double w = (1-2*x6)*V; 
+		double u = pow((pow(V,2)-pow(w,2)),0.5)*cos(2*PI*x7);
+		double v = pow((pow(V,2)-pow(w,2)),0.5)*sin(2*PI*x7);
+
+
+
+		Vecteur Pos = pos_x*X + pos_y*Y + pos_z*Z;
+		Vecteur Vel = u*X + v*Y + w*Z; 
+
 		cout << "Position : " << Pos << endl;
 		cout << "Velocity : " << Vel << endl;
 
-		//Particule Part(myPositions[i],myVelocities[i]);
 		Particule Part(Pos,Vel);
 		myParticles.push_back(Part);
 
@@ -130,104 +127,95 @@ int main( int argc, char * argv[] ) {
 	{
 		cout << "Injected Particle "  << "..." <<endl;
 		ourWorld.Injecter(*itp);
+		cout << ourWorld << endl;
 	}
 	cout << "%%%%%%%%%%%%%%% Particles added %%%%%%%%%%%%%% " << endl;
 	cout << ourWorld << endl;
 	cout << " %%%%%%%%%%%%%%%%%% UPDATING %%%%%%%%%%%%%%%%%% " <<endl;
-	ourWorld.Update(10, 20);
+
+
+	// run ourWorld for 1000 frames
+	int nbframes = 1000;
+	for (int i = 0; i < nbframes; i++)
+	{
+
+		ourWorld = returnUpdate(ourWorld);
+		cout<< " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n" << ourWorld << endl;
+		/*cout<< "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n" << endl;
+		B = myNewBox;*/
+	}
+
+
+
 
 	clock_t end = clock();
   	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 	cout << "Time Passed: " << elapsed_secs << endl;
-	// cout << " %%%%%%%%%%%%%%%%%% UPDATED %%%%%%%%%%%%%%%%%% " <<endl;
-	// cout << ourWorld << endl;
+	cout << " %%%%%%%%%%%%%%%%s%% UPDATED %%%%%%%%%%%%%%%%%% " <<endl;
+	//cout << ourWorld << endl;
+
+	// cout << "----------Testing PrintParticles: -----------" << endl;
+	// cout << "------------------------------------" << endl;
+
+	ourWorld.PrintParticles(ourWorld_txtOut); 
+
+
+
+	/*           USED FOR TESTING SOLEIL MERUCURY AND TERRE IN B 
 	
-	// prints out the entire chronographe
-	// cout << "Final sun: "<< Soleil << endl;
-	cout << "Testing PrintParticles: -----------" << endl;
-	cout << "------------------------------------" << endl;
+	cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Testing box %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl;
+	Boite B(3, 2.0);
+	B.coin.val[0] = -1.0; B.coin.val[1] = -1.0;B.coin.val[2] = -1.0;
+	cout << B << endl;
+	B.Injecter(Soleil);
+	B.Injecter(Terre);
+	B.Injecter(Mercure);
+	cout << "Injected Soleil and Terre end Mercury..." << endl;
+	cout << B << endl;
 
-	//ourWorld.PrintParticles(ourWorld_txtOut); 
 
+	cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Testing box %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl;
 
+	// // this works 
+	int nbframes = 100;
+	for (int i = 0; i < nbframes; i++)
+	{
 
-	// doesnt work even with soleil terre and mercury : i think they are just copies 
-	// vector<Particule>::iterator it = particle_list.begin();
-	// int i = 0; 
-	// for(; it != particle_list.end(); it++, i++)
-	// {
-	// 	cout<< *it << endl;
-	// 	cout << "Accessing particle\n" <<endl;
-	// 	// string curr_fileName =  to_string(i)+ ".txt";
-	// 	// ofstream curr; 
-	// 	// curr.open(curr_fileName);
-		
-	// 	for (auto& curseur : (*it).chronographe) 
-	// 	{	
-	// 		cout << "Running curseur" << endl;
-	// 		cout << curseur << endl;	
-	// 	//	curr << curseur;
-	// 	//	curr << "\n";
-	// 	}	
-	// }
-	// 	// for (auto& curseur : (*it).chronographe) 
-	// 	// {	
-	// 	// 	cout << "Running curseur" << endl;
-	// 	// 	cout << curseur << endl;	
-	// 	// //	curr << curseur;
-	// 	// //	curr << "\n";
-	// 	// }	
-	// 	// curr.close();
+		B = returnUpdate(B);
+		cout<< " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n" << B << endl;
+		/*cout<< "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n" << endl;
+		B = myNewBox;
+	}
 
-	//}
-	// cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Testing box %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl;
-	// Boite B(3, 1.0);
-	// cout << B << endl;
-	// B.Injecter(Soleil);
-	// B.Injecter(Terre);
-	// B.Injecter(Mercure);
-	// cout << "Injected Soleil and Terre..." << endl;
-	// cout << B << endl;
-
-	// cout << "------------------------------------------------Displaced Particles--------------------------------------" << endl;
-	// // for(int i=0; i<10; i++)
-	// // {
-	// // 	B.Bilan_force_complet(B);
-	// // 	B.Deplacer_particules_interieur(1.0);
-	// // } 
-
-	// // Update with timeout (total time) = 20s, timestep (number of steps in 1 s)  = 5
-	// B.Update(20, 20);
-
-	// cout << "\nChronograph of terre -------------" << endl;
-	// for (auto& curseur : Terre.chronographe) 
-	// {
-	// 	cout << curseur << endl;	
-	// 	earth_txtOut << curseur ;
-	// 	earth_txtOut << "\n";
-	// }	
-	// // cout << "velocity ---------------------------" << endl;
-	// // for (auto& curseur : Terre.velocitycheck) 
-	// // {
-	// // 	cout << curseur << endl;	
-
-	// // }	
+	cout << "Number of frames: " << (nbframes) << endl;
 	
-	// cout << "\nChronograph of sun -------------" << endl;
-	// for (auto& curseur : Soleil.chronographe) 
-	// {
-	// 	cout << curseur << endl;	
-	// 	sun_txtOut << curseur ;
-	// 	sun_txtOut << "\n";
-	// }
 
-	// 	cout << "\nChronograph of mercury -------------" << endl;
-	// for (auto& curseur : Mercure.chronographe) 
-	// {
-	// 	cout << curseur << endl;	
-	// 	mercury_txtOut << curseur ;
-	// 	mercury_txtOut << "\n";
-	// }
+	cout << "\nChronograph of terre -------------" << endl;
+	for (auto& curseur : Terre.chronographe) 
+	{
+		cout << curseur << endl;	
+		earth_txtOut << curseur ;
+		earth_txtOut << "\n";
+	}	
+
+	
+	cout << "\nChronograph of sun -------------" << endl;
+	for (auto& curseur : Soleil.chronographe) 
+	{
+		cout << curseur << endl;	
+		sun_txtOut << curseur ;
+		sun_txtOut << "\n";
+	}
+
+		cout << "\nChronograph of mercury -------------" << endl;
+	for (auto& curseur : Mercure.chronographe) 
+	{
+		cout << curseur << endl;	
+		mercury_txtOut << curseur ;
+		mercury_txtOut << "\n";
+	}
+	
+	*/
 
 
 
@@ -237,20 +225,6 @@ int main( int argc, char * argv[] ) {
 	sun_txtOut.close();
 	mercury_txtOut.close();
 
-	// test de la classe Boite
-	// Boite B(3, 1.0);
-	// cout << B << endl;
-	// B.Injecter(Soleil);
-	// B.Injecter(Mercure);
-	// B.Injecter(Venus);
-	// B.Injecter(Terre);
-	// B.Injecter(Mars);
-	// cout << B << endl;
-	
-	// B.Bilan_force_complet(B);
-	// cout << B << endl;
-	// B.Deplacer_particules_interieur(1.0);
-	// cout << B << endl;
-	// Reconstruire*/
+
 	return 0;
 }

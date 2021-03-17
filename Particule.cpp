@@ -35,7 +35,7 @@ void Particule::Appliquer(double mg, const Vecteur& centre) {
 	force += mg / (pow(norme2(centre-position)+1.0, 1.5)) * (centre-position);
 }
 
-void Particule::Deplacer(double dt) {
+void Particule::Deplacer(double dt, Vecteur coin, double rayon) {
 	//chronographe.push_back(position);
 	//cout<< "Displacing.... " <<endl;
 	chronographe.push_back(position);
@@ -48,16 +48,16 @@ void Particule::Deplacer(double dt) {
 	for (int i = 0; i < (position.dim); i++)
 	{	
 	
-		if ((float) position.val[i]>1.0)
+		if (position.val[i]> coin.val[i]+ rayon)
 		{
-			position.val[i] = 1.0;
+			position.val[i] = coin.val[i]+ rayon;
 			vitesse.val[i] *= -1;
 
 		}
 
-		if ((float) position.val[i]<-1.0)
+		if ( position.val[i]<coin.val[i])
 		{
-			position.val[i] = -1.0;
+			position.val[i] = coin.val[i];
 			vitesse.val[i] *= -1;
 
 		}

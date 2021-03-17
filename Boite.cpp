@@ -6,7 +6,7 @@ using namespace std;
 
 Boite::Boite(int dim, double rayon) {
 	this->niveau = 0;
-	this->coin = Vecteur(dim);
+	this->coin = Vecteur(dim) ;
 	this->rayon = rayon;
 	
 	masse = 0;
@@ -127,28 +127,40 @@ void Boite::Bilan_force_complet(Boite& racine) const {
 
 // Parcours toutes les particules de l'arbre.
 // Déplace chacune en fonction de la force appliquée
-void Boite::Deplacer_particules_interieur(double dt) const {
+void Boite::Deplacer_particules_interieur(double dt, Vecteur coin, double rayon) const {
 	if (filles.size()==0) {
 		if (particule!=NULL) {
-			particule->Deplacer(dt);
+			particule->Deplacer(dt, coin, rayon);
 		}
 	} else {
 		for (auto& curseur : filles) {
-			curseur.Deplacer_particules_interieur(dt);
+			curseur.Deplacer_particules_interieur(dt, coin, rayon);
 		}
 	}
 }
 
-// Mettre à jour notre système pendant timeout secondes.
-void Boite::Update(double timeout, double timestep)
+
+
+
+void Boite::InjectToNew(Boite& updatedBox)
 {
-	for (int i = 0; i < timeout*timestep; i++)
-	{
-		Bilan_force_complet(*this);
-		Deplacer_particules_interieur(1/(timestep));
+	if (filles.size()==0) {
+		if (particule!=NULL) {
+			cout << *particule <<endl;
+			updatedBox.Injecter(*particule);
+			cout << "===============Injecting Particle===============\n";
+			cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n" ;
+			// cout << updatedBox << endl;
+			// cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " << "\n" ;
+
+		}
+	} else {
+		for (auto& curseur : filles) {
+			curseur.InjectToNew(updatedBox);
+		}
 	}
-	cout << "Number of frames: " << (timeout*timestep) << endl;
 }
+
 
 // Write all data for all particles into one single file
 void Boite::PrintParticles(ofstream& ofs)
@@ -158,8 +170,7 @@ void Boite::PrintParticles(ofstream& ofs)
 			cout << *particule << "\n" <<endl;
 			for (auto& curseur : (*particule).chronographe) 
 			{	
-				// cout << "Running curseur" << endl;
-				// cout << curseur << endl;	
+
 				// write in file
 				ofs << curseur ;
 			 	ofs << "\n";
@@ -174,7 +185,7 @@ void Boite::PrintParticles(ofstream& ofs)
 ostream& operator<<(ostream& os, const Boite& B) {
 	for(int i=0; i<B.niveau; i++) os << '\t';
 	os<<"Boite: " << "niveau: " <<B.niveau<<", "<<"rayon: " <<B.rayon<<", "<<"coin: " <<B.coin<<", "<<"centre: " <<B.centre<<", "<<"mass: " << B.masse << endl;
-	for (auto& curseur : B.filles) os << curseur;
+	for (auto& curseur : B.filles) os << curseur ;
 	
 	if (B.particule!=NULL) {
 		os << "--------------------------------------------------\n";
@@ -184,3 +195,92 @@ ostream& operator<<(ostream& os, const Boite& B) {
 	}
 	return os;	
 }
+
+
+Boite returnUpdate(Boite& BOX)
+{
+	BOX.Bilan_force_complet(BOX);
+	BOX.Deplacer_particules_interieur(0.1, BOX.coin, BOX.rayon);
+
+	Boite NewBox(3,20.0);
+	NewBox.coin = BOX.coin;
+	BOX.InjectToNew(NewBox);
+	return NewBox;
+}
+
+// Mettre à jour notre système pendant timeout secondes.
+
+/*
+void Boite::Update(double timeout, double timestep, Boite& updateBox)
+{
+	cout << "---------------------------------------------------------" << endl;
+	cout << "Here is START box: --------------------------------------" << endl;
+	cout << *this << endl;
+	cout << "Starting particle :" << particule << endl;
+	for (int i = 0; i < timeout*timestep; i++)
+	{
+		cout << " %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% " << endl;
+		cout << " %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% " << endl;
+		Bilan_force_complet(*this);
+		Deplacer_particules_interieur(1/(timestep));
+		cout << "Creating new box... " << endl;
+		// make new box
+		//Boite UpdatedBoite = (3,1.0); 
+		cout << updateBox << "\n %%%%%%%%%%%%%%%%%%%%%%%%%%% MY NEW BOX  %%%%%%%%%%%%%%%%%%%%%%%%%%%\n" << endl;
+		InjectToNew(updateBox); 
+
+		cout << "---------------------------------------------------------" << endl;
+		cout << "---------------------------------------------------------" << endl;
+		cout << "Here is old box: --------------------------------------\n" << endl;
+		cout << *this << endl;
+		cout << "End of old box" << endl;
+
+		cout << "----------------------&&&&&&&&&&&&----------------------" << endl;
+		cout << "----------------------&&&&&&&&&&&&-----------------------" << endl;
+
+		cout << "Here is new box: --------------------------------------" << endl;
+
+		*this = updateBox;
+
+				//  run through each particle from the old set of boxes and inject them in new box
+
+		// vector<Boite>::iterator itb = filles.begin();
+		// for (; itb != filles.end(); itb++) 
+		// {
+		// 	cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%% RUNNING THROUGH FILLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%% " << endl;		
+		// 	cout << *itb << endl;
+		// 	cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%% RUNNING THROUGH SUB FILLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%% " << endl;		
+
+		// 	vector<Boite>::iterator its = (*itb).filles.begin();
+		// 	for (; its != (*itb).filles.end(); its++) 
+		// 	{
+		// 		cout << *its << endl;
+		// 	}
+		// }
+		// cout << " %%%%%%%%%%%%%%%%%%%%%%%%%%%% END OF RUN FILLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl;
+		// for (auto& curseur : filles) 
+		// {
+
+
+		// 	cout << "RUNNING THROUGH FILLES " << endl;
+		// 	cout << "Test curseur" << curseur << endl;
+		// 	cout << "Test curseur end --------------- " << endl;
+		// 	if (curseur.particule!=NULL) {
+		// 		cout << "--------------------------------------------------\n";
+		// 		for(int i=0; i<curseur.niveau+1; i++) cout << '\t';
+		// 		cout << *(curseur.particule);
+		// 		cout << "------PARTICLLLLELEEE---------\n";
+		// 	}
+		// 	// if (curseur.particule!=NULL) {
+		// 	// cout << "--------------------------------------------------\n" ;
+		// 	// cout << "Particle found" << endl;
+		// 	// cout << curseur.particule ;
+		// 	// cout  << "--------------------------------------------------\n" << endl;
+		// 	// }
+		// }
+		//InjectToNew(UpdatedBoite);
+
+	}
+	cout << "Number of frames: " << (timeout*timestep) << endl;
+}
+*/
